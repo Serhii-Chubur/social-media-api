@@ -3,6 +3,7 @@ black==25.1.0
 click==8.1.8
 colorama==0.4.6
 Django==5.1.5
+django-debug-toolbar==5.0.1
 django-rest-framework==0.1.0
 djangorestframework==3.15.2
 flake8==7.1.1
@@ -10,6 +11,7 @@ mccabe==0.7.0
 mypy-extensions==1.0.0
 packaging==24.2
 pathspec==0.12.1
+pillow==11.1.0
 platformdirs==4.3.6
 pycodestyle==2.12.1
 pyflakes==3.2.0
