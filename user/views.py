@@ -3,11 +3,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.request import Request
+from rest_framework_simplejwt.token_blacklist.models import (
+    OutstandingToken,
+    BlacklistedToken,
+)
 
-from rest_framework_simplejwt.tokens import OutstandingToken
 
 from user.serializers import UserSerializer
-from rest_framework.decorators import action
 
 
 # Create your views here.
@@ -24,19 +27,12 @@ class ManageUserView(RetrieveUpdateAPIView):
         return self.request.user
 
 
-class LogoutView(APIView):
+class ResetTokenAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def list(self, request):
-        OutstandingToken.objects.filter(user=request.user).update(
-            blacklisted=True
-        )
+    def post(self, request: Request) -> Response:
+        tokens = OutstandingToken.objects.filter(user_id=request.user.id)
+        for token in tokens:
+            BlacklistedToken.objects.get_or_create(token=token)
+
         return Response(status=status.HTTP_205_RESET_CONTENT)
-
-
-# @api_view(['POST'])
-# def logout(request):
-#     tokens = OutstandingToken.objects.filter(user=request.user)
-#     for token in tokens:
-#         token, _ = BlacklistedToken.objects.get_or_create(token=token)
-#     return Response(status=status.HTTP_205_RESET_CONTENT)
