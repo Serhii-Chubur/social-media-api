@@ -1,11 +1,8 @@
-import profile
-import re
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.request import Request
 
 from social_media.models import Comment, Follow, Like, Post, Profile, Tag
 from social_media.permissions import ProfilePermission, PostPermission
@@ -17,6 +14,7 @@ from social_media.serializers import (
     ProfileSerializer,
     TagSerializer,
 )
+import user
 
 
 # Create your views here.
@@ -58,6 +56,54 @@ class ProfileViewSet(viewsets.ModelViewSet):
     )
     def my_profile(self, request, *args, **kwargs):
         profile = request.user.profile
+        return HttpResponseRedirect(
+            reverse("social_media:profile-detail", args=[profile.id])
+        )
+
+    @action(
+        methods=["GET"],
+        detail=False,
+    )
+    def followings(self, request, *args, **kwargs):
+        followings = Follow.objects.filter(follower=request.user.profile)
+        self.queryset = self.queryset.filter(
+            user__profile__in=followings.values("following")
+        )
+        return super().list(request, *args, **kwargs)
+
+    @action(
+        methods=["GET"],
+        detail=False,
+    )
+    def followers(self, request, *args, **kwargs):
+        followers = Follow.objects.filter(following=request.user.profile)
+        self.queryset = self.queryset.filter(
+            user__profile__in=followers.values("follower")
+        )
+        return super().list(request, *args, **kwargs)
+
+    @action(
+        methods=["GET"],
+        detail=True,
+    )
+    def following(self, request, *args, **kwargs):
+        profile = self.get_object()
+        user = request.user.profile
+        
+        follow_data = {
+            "follower": user.id,
+            "following": profile.id,
+        }
+        
+        serializer = FollowSerializer(data=follow_data)
+        serializer.is_valid(raise_exception=True)
+        
+        relation = Follow.objects.filter(follower=user, following=profile)
+        
+        if not relation.exists():
+            Follow.objects.create(follower=user, following=profile)
+        else:
+            relation.delete()
         return HttpResponseRedirect(
             reverse("social_media:profile-detail", args=[profile.id])
         )
