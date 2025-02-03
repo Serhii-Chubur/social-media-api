@@ -1,6 +1,11 @@
+import profile
+import re
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from rest_framework import viewsets
 from rest_framework.decorators import action
-
+from rest_framework.response import Response
+from rest_framework.request import Request
 
 from social_media.models import Comment, Follow, Like, Post, Profile, Tag
 from social_media.permissions import ProfilePermission, PostPermission
@@ -47,6 +52,16 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
         return self.queryset
 
+    @action(
+        methods=["GET"],
+        detail=False,
+    )
+    def my_profile(self, request, *args, **kwargs):
+        profile = request.user.profile
+        return HttpResponseRedirect(
+            reverse("social_media:profile-detail", args=[profile.id])
+        )
+
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
@@ -63,8 +78,10 @@ class PostViewSet(viewsets.ModelViewSet):
         detail=False,
     )
     def my_posts(self, request, *args, **kwargs):
-        self.queryset = self.queryset.filter(author__user=request.user)
-        return super().list(request, *args, **kwargs)
+        username = request.user.profile.username
+        return HttpResponseRedirect(
+            reverse("social_media:post-list") + f"?author={username}"
+        )
 
     @action(
         methods=["GET"],
@@ -76,6 +93,26 @@ class PostViewSet(viewsets.ModelViewSet):
             author__user__in=followings.values("following")
         )
         return super().list(request, *args, **kwargs)
+
+    @action(
+        methods=["GET"],
+        detail=False,
+    )
+    def likes(self, request, *args, **kwargs):
+        self.queryset = self.queryset.filter(likes__user__user=request.user)
+        return super().list(request, *args, **kwargs)
+
+    @action(
+        methods=["GET"],
+        detail=True,
+    )
+    def reaction(self, request, *args, **kwargs):
+        post = self.get_object()
+        if post.likes.filter(user=request.user.profile).exists():
+            post.likes.filter(user=request.user.profile).delete()
+        else:
+            post.likes.create(user=request.user.profile)
+        return self.retrieve(request, *args, **kwargs)
 
     def get_queryset(self):
         tag_data = self.request.GET.get("tag")
