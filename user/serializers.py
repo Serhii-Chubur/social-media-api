@@ -10,6 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "email",
+            "password",
             "is_staff",
         )
         read_only_fields = (

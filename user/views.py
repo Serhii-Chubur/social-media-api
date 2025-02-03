@@ -1,3 +1,5 @@
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -8,8 +10,6 @@ from rest_framework_simplejwt.token_blacklist.models import (
     OutstandingToken,
     BlacklistedToken,
 )
-
-
 from user.serializers import UserSerializer
 
 
@@ -35,4 +35,4 @@ class ResetTokenAPIView(APIView):
         for token in tokens:
             BlacklistedToken.objects.get_or_create(token=token)
 
-        return Response(status=status.HTTP_205_RESET_CONTENT)
+        return HttpResponseRedirect(reverse("user:token_obtain_pair"))
