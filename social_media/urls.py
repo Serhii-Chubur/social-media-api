@@ -1,5 +1,5 @@
 from rest_framework import routers
-from django.urls import include, path, reverse
+from django.urls import include, path
 
 from social_media import views
 

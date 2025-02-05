@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.db import models
-from django.core.exceptions import ValidationError
 
 
 # Create your models here.
@@ -34,13 +33,13 @@ class Post(models.Model):
     author = models.ForeignKey(
         Profile, on_delete=models.CASCADE, related_name="posts"
     )
-    content = models.TextField()
+    post_content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     media = models.ImageField(upload_to="posts/", null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True, related_name="posts")
 
     def __str__(self):
-        return f"{self.author} posted: {self.content}"
+        return f"{self.author} posted: {self.post_content}"
 
 
 class Comment(models.Model):

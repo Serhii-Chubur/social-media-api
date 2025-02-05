@@ -3,18 +3,21 @@ from django.urls import reverse
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 from social_media.models import Comment, Follow, Like, Post, Profile, Tag
 from social_media.permissions import ProfilePermission, PostPermission
 from social_media.serializers import (
+    CommentPostSerializer,
     CommentSerializer,
     FollowSerializer,
     LikeSerializer,
+    PostRetrieveSerializer,
     PostSerializer,
     ProfileSerializer,
     TagSerializer,
 )
-import user
 
 
 # Create your views here.
@@ -89,17 +92,17 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def following(self, request, *args, **kwargs):
         profile = self.get_object()
         user = request.user.profile
-        
+
         follow_data = {
             "follower": user.id,
             "following": profile.id,
         }
-        
+
         serializer = FollowSerializer(data=follow_data)
         serializer.is_valid(raise_exception=True)
-        
+
         relation = Follow.objects.filter(follower=user, following=profile)
-        
+
         if not relation.exists():
             Follow.objects.create(follower=user, following=profile)
         else:
@@ -118,6 +121,14 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (PostPermission,)
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return PostRetrieveSerializer
+        if self.action == "comment":
+            return CommentPostSerializer
+
+        return PostSerializer
 
     @action(
         methods=["POST", "GET"],
@@ -156,9 +167,32 @@ class PostViewSet(viewsets.ModelViewSet):
         post = self.get_object()
         if post.likes.filter(user=request.user.profile).exists():
             post.likes.filter(user=request.user.profile).delete()
+            return HttpResponseRedirect(reverse("social_media:post-detail", args=[post.id]))
+
         else:
             post.likes.create(user=request.user.profile)
-        return self.retrieve(request, *args, **kwargs)
+            return HttpResponseRedirect(reverse("social_media:post-detail", args=[post.id]))
+
+    @action(methods=["GET", "POST"], detail=True)
+    def comment(self, request, *args, **kwargs):
+
+        self.permission_classes = (IsAuthenticated,)
+        post = self.get_object()
+        if request.method == "POST":
+            serializer = CommentPostSerializer(
+                data=request.data, context={"request": request, "post": post}
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return HttpResponseRedirect(
+                    reverse("social_media:post-detail", args=[post.id])
+                )
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        post_serializer = PostRetrieveSerializer(post)
+        return Response(post_serializer.data, status=status.HTTP_200_OK)
 
     def get_queryset(self):
         tag_data = self.request.GET.get("tag")
