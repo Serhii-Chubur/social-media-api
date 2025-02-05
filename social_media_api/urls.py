@@ -18,10 +18,17 @@ Including another URLconf
 from debug_toolbar.toolbar import debug_toolbar_urls
 from django.contrib import admin
 from django.urls import include, path
+from django.conf.urls.static import static
+
+from social_media_api import settings
 
 
-urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("platform/", include("social_media.urls")),
-    path("user/", include("user.urls")),
-] + debug_toolbar_urls()
+urlpatterns = (
+    [
+        path("admin/", admin.site.urls),
+        path("platform/", include("social_media.urls")),
+        path("user/", include("user.urls")),
+    ]
+    + debug_toolbar_urls()
+    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+)
