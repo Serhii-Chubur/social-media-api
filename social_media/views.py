@@ -12,12 +12,16 @@ from social_media.serializers import (
     CommentPostSerializer,
     CommentSerializer,
     FollowSerializer,
+    LikeRetrieveSerializer,
     LikeSerializer,
+    PostListSerializer,
     PostRetrieveSerializer,
     PostSerializer,
+    ProfileListSerializer,
     ProfileSerializer,
     TagSerializer,
 )
+from user import serializers
 
 
 # Create your views here.
@@ -25,6 +29,11 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = (ProfilePermission,)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return ProfileListSerializer
+        return super().get_serializer_class()
 
     def get_queryset(self):
         email = self.request.GET.get("email")
@@ -123,6 +132,8 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = (PostPermission,)
 
     def get_serializer_class(self):
+        if self.action == "list":
+            return PostListSerializer
         if self.action == "retrieve":
             return PostRetrieveSerializer
         if self.action == "comment":
@@ -141,7 +152,7 @@ class PostViewSet(viewsets.ModelViewSet):
         )
 
     @action(
-        methods=["GET"],
+        methods=["GET", "POST"],
         detail=False,
     )
     def following_posts(self, request, *args, **kwargs):
@@ -152,15 +163,15 @@ class PostViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
     @action(
-        methods=["GET"],
+        methods=["GET", "POST"],
         detail=False,
     )
     def likes(self, request, *args, **kwargs):
-        self.queryset = self.queryset.filter(likes__user__user=request.user)
-        return super().list(request, *args, **kwargs)
-
+        likes_data = self.queryset.filter(likes__user__user=request.user)
+        serializer = PostRetrieveSerializer(likes_data, many=True)
+        return Response(serializer.data)
+    
     @action(
-        methods=["GET"],
         detail=True,
     )
     def reaction(self, request, *args, **kwargs):
@@ -221,7 +232,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class LikeViewSet(viewsets.ModelViewSet):
     queryset = Like.objects.all()
-    serializer_class = LikeSerializer
+    serializer_class = LikeRetrieveSerializer
 
 
 class FollowViewSet(viewsets.ModelViewSet):
