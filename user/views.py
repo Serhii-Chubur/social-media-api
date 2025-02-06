@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -15,7 +15,7 @@ from user.serializers import UserSerializer
 # Create your views here.
 class CreateUserView(CreateAPIView):
     serializer_class = UserSerializer
-    permissions_classes = ()
+    permission_classes = (AllowAny,)
 
 
 class ManageUserView(RetrieveUpdateAPIView):

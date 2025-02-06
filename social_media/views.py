@@ -73,6 +73,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
         of the current user. The user is redirected to the profile
         detail page after the action.
         """
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("user:create_user"))
 
         profile = request.user.profile
         return HttpResponseRedirect(
@@ -91,6 +93,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
         current user is following. The users are filtered based on the follow
         relationships of the current user's profile.
         """
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("user:create_user"))
+
         followings = Follow.objects.filter(follower=request.user.profile)
         self.queryset = self.queryset.filter(
             user__profile__in=followings.values("following")
@@ -109,6 +114,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
         following the current user. The users are filtered based on the follow
         relationships of the current user's profile.
         """
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("user:create_user"))
+
         followers = Follow.objects.filter(following=request.user.profile)
         self.queryset = self.queryset.filter(
             user__profile__in=followers.values("follower")
@@ -131,6 +139,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
         If the follow relationship exists,
         the follow relationship is deleted.
         """
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("user:create_user"))
 
         profile = self.get_object()
         user = request.user.profile
@@ -325,6 +335,9 @@ class PostViewSet(viewsets.ModelViewSet):
         It redirects to the post list with the query parameter
         'author' set to the username of the current user.
         """
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("user:create_user"))
+
         username = request.user.profile.username
         return HttpResponseRedirect(
             reverse("social_media:post-list") + f"?author={username}"
@@ -345,6 +358,8 @@ class PostViewSet(viewsets.ModelViewSet):
         The posts are filtered based on the
         follow relationships of the current user's profile.
         """
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("user:create_user"))
 
         followings = Follow.objects.filter(follower=request.user.profile)
         self.queryset = self.queryset.filter(
@@ -364,6 +379,9 @@ class PostViewSet(viewsets.ModelViewSet):
         current user has liked. The posts are filtered based on the like
         relationships of the current user's profile.
         """
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("user:create_user"))
+
         likes_data = self.queryset.filter(likes__user__user=request.user)
         serializer = PostRetrieveSerializer(likes_data, many=True)
         return Response(serializer.data)
@@ -380,6 +398,8 @@ class PostViewSet(viewsets.ModelViewSet):
         If the post is not liked by the user, a new like is created.
         Redirects the user to the post detail page after the action.
         """
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("user:create_user"))
 
         post = self.get_object()
         if post.likes.filter(user=request.user.profile).exists():
@@ -410,6 +430,9 @@ class PostViewSet(viewsets.ModelViewSet):
         post data including the new comment.
         The user is redirected to the post detail page.
         """
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("user:create_user"))
+
         self.permission_classes = (IsAuthenticated,)
         post = self.get_object()
         if request.method == "POST":
