@@ -16,7 +16,9 @@ def image_upload(instance: Any, filename: str) -> pathlib.Path:
             f"{slugify(name)}"
             f"_{uuid.uuid4()}" + pathlib.Path(filename).suffix
         )
-        return pathlib.Path(f"posts/{instance.author.username}") / pathlib.Path(filename)
+        return pathlib.Path(
+            f"posts/{instance.author.username}"
+        ) / pathlib.Path(filename)
 
     elif isinstance(instance, Profile):
         filename = (

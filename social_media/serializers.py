@@ -88,7 +88,6 @@ class PostListSerializer(serializers.ModelSerializer):
     tags = TagRetrieveSerializer(many=True)
     author = serializers.CharField(source="author.username", read_only=True)
 
-
     class Meta:
         model = Post
         fields = "id", "likes", "tags", "post_content", "author"
@@ -102,9 +101,13 @@ class PostListSerializer(serializers.ModelSerializer):
 
 class CommentInPostSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="author.username", read_only=True)
+
     class Meta:
         model = Comment
-        fields = ("author", "content",)
+        fields = (
+            "author",
+            "content",
+        )
 
     def create(self, validated_data):
         return super().create(validated_data)
@@ -145,7 +148,9 @@ class PostRetrieveSerializer(serializers.ModelSerializer):
     tags = TagRetrieveSerializer(many=True)
     comments = CommentInPostSerializer(many=True, read_only=True)
     likes = serializers.IntegerField(source="likes.count", read_only=True)
-    liked_users = LikeRetrieveSerializer(source="likes", many=True, read_only=True)
+    liked_users = LikeRetrieveSerializer(
+        source="likes", many=True, read_only=True
+    )
     author = serializers.CharField(source="author.username", read_only=True)
 
     class Meta:

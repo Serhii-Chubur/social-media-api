@@ -14,7 +14,6 @@ from social_media.serializers import (
     CommentSerializer,
     FollowSerializer,
     LikeRetrieveSerializer,
-    LikeSerializer,
     PostListSerializer,
     PostRetrieveSerializer,
     PostSerializer,
@@ -22,7 +21,6 @@ from social_media.serializers import (
     ProfileSerializer,
     TagSerializer,
 )
-from user import serializers
 
 
 # Create your views here.
@@ -123,12 +121,15 @@ class ProfileViewSet(viewsets.ModelViewSet):
     )
     def follow(self, request, *args, **kwargs):
         """
-        Toggle a follow relationship between the current user and the profile.
+        Toggle a follow relationship
+        between the current user and the profile.
 
-        This action handles GET requests to toggle a follow relationship between
-        the current user and the profile. If the follow relationship does not
-        exist, a new follow relationship is created. If the follow relationship
-        exists, the follow relationship is deleted.
+        This action handles GET requests to toggle a follow relationship
+        between the current user and the profile.
+        If the follow relationship does not exist,
+        a new follow relationship is created.
+        If the follow relationship exists,
+        the follow relationship is deleted.
         """
 
         profile = self.get_object()
@@ -201,9 +202,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
         """
         Retrieve a specific profile by its ID.
 
-        This method handles GET requests to retrieve a detailed representation of a specific
-        profile. It utilizes the ProfileSerializer to serialize the retrieved profile data and
-        returns the detailed profile information with a status indicating success.
+        This method handles GET requests
+        to retrieve a detailed representation of a specific
+        profile. It utilizes the ProfileSerializer
+        to serialize the retrieved profile data
+        and returns the detailed profile information
+        with a status indicating success.
         """
 
         return super().retrieve(request, *args, **kwargs)
@@ -213,9 +217,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
         """
         Create a new profile.
 
-        This method handles POST requests to create a new profile. It utilizes
-        the ProfileSerializer to validate and deserialize the incoming data.
-        Upon successful creation, it returns a serialized representation of the
+        This method handles POST requests
+        to create a new profile.
+        It utilizes the ProfileSerializer to validate
+        and deserialize the incoming data.
+        Upon successful creation,
+        it returns a serialized representation of the
         newly created profile with a status indicating success.
         """
         return super().create(request, *args, **kwargs)
@@ -225,9 +232,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
         """
         Update a specific profile by its ID.
 
-        This method handles PUT requests to update an existing profile. It utilizes
-        the ProfileSerializer to validate and deserialize the incoming data. Upon
-        successful update, it returns a serialized representation of the updated
+        This method handles PUT requests to update
+        an existing profile. It utilizes
+        the ProfileSerializer to validate and
+        deserialize the incoming data.
+        Upon successful update, it returns a serialized
+        representation of the updated
         profile with a status indicating success.
         """
 
@@ -238,9 +248,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
         """
         Partially update a specific profile by its ID.
 
-        This method handles PATCH requests to partially update an existing profile.
-        It utilizes the ProfileSerializer to validate and deserialize the incoming data.
-        Upon successful partial update, it returns a serialized representation of the
+        This method handles PATCH requests
+        to partially update an existing profile.
+        It utilizes the ProfileSerializer
+        to validate and deserialize the incoming data.
+        Upon successful partial update,
+        it returns a serialized representation of the
         partially updated profile with a status indicating success.
         """
         return super().partial_update(request, *args, **kwargs)
@@ -250,8 +263,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
         """
         Delete a specific profile by its ID.
 
-        This method handles DELETE requests to delete an existing profile. It returns
-        a status indicating success upon successful deletion.
+        This method handles DELETE requests
+        to delete an existing profile.
+        It returns a status indicating success
+        upon successful deletion.
         """
         return super().destroy(request, *args, **kwargs)
 
@@ -304,8 +319,10 @@ class PostViewSet(viewsets.ModelViewSet):
         """
         Retrieve a list of posts by the current user.
 
-        This method handles GET and POST requests to retrieve a list of posts created
-        by the current user. It redirects to the post list with the query parameter
+        This method handles GET and POST requests
+        to retrieve a list of posts created
+        by the current user.
+        It redirects to the post list with the query parameter
         'author' set to the username of the current user.
         """
         username = request.user.profile.username
@@ -319,10 +336,13 @@ class PostViewSet(viewsets.ModelViewSet):
     )
     def following_posts(self, request, *args, **kwargs):
         """
-        Retrieve a list of posts from users the current user is following.
+        Retrieve a list of posts from users
+        the current user is following.
 
-        This action handles GET and POST requests to fetch posts authored by users
-        whom the current user is following. The posts are filtered based on the
+        This action handles GET and POST
+        requests to fetch posts authored by users
+        whom the current user is following.
+        The posts are filtered based on the
         follow relationships of the current user's profile.
         """
 
@@ -445,9 +465,11 @@ class PostViewSet(viewsets.ModelViewSet):
         """
         Handle POST requests for creating a post.
 
-        This method processes incoming POST requests to create a new post. It utilizes
-        the PostSerializer to validate and deserialize the incoming data. Upon
-        successful creation, it returns a serialized representation of the newly
+        This method processes incoming POST requests to create a new post.
+        It utilizes the PostSerializer
+        to validate and deserialize the incoming data.
+        Upon successful creation,
+        it returns a serialized representation of the newly
         created post with a status indicating success.
         """
 
@@ -458,8 +480,10 @@ class PostViewSet(viewsets.ModelViewSet):
         """
         Retrieve a specific post by its ID.
 
-        This method handles GET requests to retrieve a detailed representation of a specific post.
-        It utilizes the PostRetrieveSerializer to serialize the retrieved post data and returns
+        This method handles GET requests
+        to retrieve a detailed representation of a specific post.
+        It utilizes the PostRetrieveSerializer
+        to serialize the retrieved post data and returns
         the detailed post information with a status indicating success.
         """
 
@@ -470,9 +494,12 @@ class PostViewSet(viewsets.ModelViewSet):
         """
         Update a specific post by its ID.
 
-        This method handles PUT requests to update an existing post. It utilizes
-        the PostSerializer to validate and deserialize the incoming data. Upon
-        successful update, it returns a serialized representation of the updated
+        This method handles PUT requests
+        to update an existing post.
+        It utilizes the PostSerializer
+        to validate and deserialize the incoming data.
+        Upon successful update,
+        it returns a serialized representation of the updated
         post with a status indicating success.
         """
         return super().update(request, *args, **kwargs)
@@ -482,9 +509,12 @@ class PostViewSet(viewsets.ModelViewSet):
         """
         Partially update a specific post by its ID.
 
-        This method handles PATCH requests to partially update an existing post.
-        It utilizes the PostSerializer to validate and deserialize the incoming data.
-        Upon successful partial update, it returns a serialized representation of the
+        This method handles PATCH requests
+        to partially update an existing post.
+        It utilizes the PostSerializer
+        to validate and deserialize the incoming data.
+        Upon successful partial update,
+        it returns a serialized representation of the
         partially updated post with a status indicating success.
         """
         return super().partial_update(request, *args, **kwargs)
@@ -494,7 +524,8 @@ class PostViewSet(viewsets.ModelViewSet):
         """
         Delete a specific post by its ID.
 
-        This method handles DELETE requests to delete an existing post. It returns
+        This method handles DELETE requests
+        to delete an existing post. It returns
         a status indicating success upon successful deletion.
         """
         return super().destroy(request, *args, **kwargs)
