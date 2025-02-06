@@ -1,0 +1,114 @@
+[
+    {
+        "model": "social_media.profile",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "username": "john_doe",
+            "birth_date": "1990-01-01",
+            "first_name": "John",
+            "last_name": "Doe",
+            "profile_picture": "profile_pictures/john_doe.jpg",
+            "bio": "Hello, I'm John!"
+        }
+    },
+    {
+        "model": "social_media.profile",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "username": "jane_smith",
+            "birth_date": "1992-02-02",
+            "first_name": "Jane",
+            "last_name": "Smith",
+            "profile_picture": "profile_pictures/jane_smith.jpg",
+            "bio": "Hi, I'm Jane!"
+        }
+    },
+    {
+        "model": "social_media.tag",
+        "pk": 1,
+        "fields": {
+            "name": "travel"
+        }
+    },
+    {
+        "model": "social_media.tag",
+        "pk": 2,
+        "fields": {
+            "name": "food"
+        }
+    },
+    {
+        "model": "social_media.post",
+        "pk": 1,
+        "fields": {
+            "author": 1,
+            "content": "Just had an amazing trip!",
+            "created_at": "2023-10-01T12:00:00Z",
+            "media": "posts/trip.jpg"
+        }
+    },
+    {
+        "model": "social_media.post",
+        "pk": 2,
+        "fields": {
+            "author": 2,
+            "content": "Delicious food at the new restaurant!",
+            "created_at": "2023-10-02T12:00:00Z",
+            "media": "posts/food.jpg"
+        }
+    },
+    {
+        "model": "social_media.comment",
+        "pk": 1,
+        "fields": {
+            "post": 1,
+            "author": 2,
+            "content": "Looks amazing!"
+        }
+    },
+    {
+        "model": "social_media.comment",
+        "pk": 2,
+        "fields": {
+            "post": 2,
+            "author": 1,
+            "content": "I need to try this place!"
+        }
+    },
+    {
+        "model": "social_media.like",
+        "pk": 1,
+        "fields": {
+            "post": 1,
+            "user": 2
+        }
+    },
+    {
+        "model": "social_media.like",
+        "pk": 2,
+        "fields": {
+            "post": 2,
+            "user": 1
+        }
+    },
+    {
+        "model": "social_media.follow",
+        "pk": 1,
+        "fields": {
+            "follower": 1,
+            "following": 2,
+            "followed_at": "2023-10-01T12:00:00Z"
+        }
+    },
+    {
+        "model": "social_media.follow",
+        "pk": 2,
+        "fields": {
+            "follower": 2,
+            "following": 1,
+            "followed_at": "2023-10-02T12:00:00Z"
+        }
+    }
+]

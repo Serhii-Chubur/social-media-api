@@ -1,0 +1,64 @@
+Table User {
+    id Int [pk, increment]
+    email String [unique]
+    first_name String
+    last_name String
+    password String
+    created_at DateTime
+    updated_at DateTime
+}
+
+Table Profile {
+    id Int [pk, increment]
+    user_id Int [ref: - User.id]
+    username String [unique]
+    birth_date Date
+    first_name String
+    last_name String
+    profile_picture Image
+    bio Text
+}
+
+Table Post {
+    id Int [pk, increment]
+    author_id Int [ref: > Profile.id]
+    post_content Text
+    created_at DateTime
+    media Image
+    tags Int [ref: <> Tag.id]
+}
+
+Table Comment {
+    id Int [pk, increment]
+    author_id Int [ref: > Profile.id]
+    post_id Int [ref: > Post.id]
+    content Text
+}
+
+Table Like {
+    id Int [pk, increment]
+    user_id Int [ref: > Profile.id]
+    post_id Int [ref: > Post.id]
+}
+
+Table Follow {
+    id Int [pk, increment]
+    follower_id Int [ref: > Profile.id]
+    following_id Int [ref: > Profile.id]
+    followed_at DateTime
+}
+
+Table Tag {
+    id Int [pk, increment]
+    name String
+}
+
+Ref: Profile.user_id - User.id
+Ref: Post.tags <> Tag.id
+Ref: Post.author_id > Profile.id
+Ref: Comment.post_id > Post.id
+Ref: Comment.author_id > Profile.id
+Ref: Like.post_id > Post.id
+Ref: Like.user_id > Profile.id
+Ref: Follow.follower_id > Profile.id
+Ref: Follow.following_id > Profile.id
