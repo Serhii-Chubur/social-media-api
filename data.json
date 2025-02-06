@@ -16,7 +16,7 @@
         "model": "social_media.profile",
         "pk": 2,
         "fields": {
-            "user": 3,
+            "user": 2,
             "username": "jane_smith",
             "birth_date": "1992-02-02",
             "first_name": "Jane",

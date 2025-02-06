@@ -14,6 +14,7 @@ The project is structured to support scalability and maintainability, with separ
 - pip install -r requirements.txt
 - python manage.py migrate
 - python manage.py createsuperuser
+- create additional user to be able to use all functionality
 - python manage.py loaddata data.json
 - python manage.py runserver
 
